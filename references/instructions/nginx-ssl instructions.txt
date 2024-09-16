@@ -1,0 +1,82 @@
+Step 1) Install Nginx Web Server
+	$sudo apt-get update
+	$sudo apt-get upgrade
+	$sudo apt-get install nginx
+ 
+	
+Step 2) Configure SSL
+A) create a self-signed key and certificate pair with OpenSSL in a single command:
+	
+	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+
+Fill out questions and make sure domain name matches AWS entry for server
+
+B) create a strong Diffie-Hellman group, which is used in negotiating Perfect Forward Secrecy with clients
+	
+	sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+	
+C) create a new Nginx configuration snippet in the /etc/nginx/snippets directory
+	
+	sudo vim /etc/nginx/snippets/self-signed.conf
+	
+	The contents of file are:
+	
+	ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+	ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+	
+D) create another snippet that will define some SSL settings
+
+	sudo vi /etc/nginx/snippets/ssl-params.conf
+	
+	The contents of file are:
+	
+# from https://cipherli.st/
+# and https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+
+ssl_protocols TLSv1.2;
+ssl_prefer_server_ciphers on;
+ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+ssl_ecdh_curve secp384r1;
+ssl_session_cache shared:SSL:10m;
+ssl_session_tickets off;
+ssl_stapling on;
+ssl_stapling_verify on;
+resolver 8.8.8.8 8.8.4.4 valid=300s;
+resolver_timeout 5s;
+# Disable preloading HSTS for now.  You can use the commented out header line that includes
+# the "preload" directive if you understand the implications.
+#add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
+add_header X-Frame-Options DENY;
+add_header X-Content-Type-Options nosniff;
+ssl_dhparam /etc/ssl/certs/dhparam.pem;
+	
+Step 3) Configure Webserver
+	sudo vi /etc/nginx/sites-available/default
+	A) Remove the current "listen 80*" directives:
+		listen 80 default_server;
+		listen [::]:80 default_server;
+	B) Update server name to your AWS FQDN
+	C) Add the new ssl directives:
+		# SSL configuration
+		listen 443 ssl http2 default_server;
+		listen [::]:443 ssl http2 default_server;
+		include snippets/self-signed.conf;
+		include snippets/ssl-params.conf;
+		
+	D) Create a new server directive after the first server {} directive:
+		
+		server {
+		listen 80 default_server;
+		listen [::]:80 default_server;
+		server_name server_domain_or_IP;
+		return 302 https://$server_name$request_uri;
+	}
+	
+Step 5) Restart Webserver
+	sudo nginx -t
+	sudo service nginx reload
+	
+Step 6)
+	cd /var/www/html
+	sudo mv index.nginx-debian.html index.html
