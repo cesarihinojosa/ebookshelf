@@ -1,10 +1,12 @@
 from bs4 import BeautifulSoup
 import requests
+import re
 
 start = 1
 current = start
 end = 5000
-titles = []
+books = []
+small_images = []
 
 while current < end:
 
@@ -24,17 +26,16 @@ while current < end:
             rows = table.find_all('tr')
             for row in rows:
                 # Find all <td> elements with class 'field title'
-                cells = row.find_all('td', class_='field title')
-                for cell in cells:
-                    # Find the <a> tag inside the <td>
-                    link = cell.find('a')
-                    
-                    if link:
-                        # Extract text attribute of the <a> tag
-                        link_text = link.get_text(strip=True)
-                        titles.append(link_text)
+                cover = row.find('td', class_='field cover')
+                if cover:
+                    img_tag = cover.find("img")
+                    if img_tag and img_tag.has_attr('src'):
+                        img_src = img_tag['src']
+                        small_images.append(img_src)
                     else:
-                        print("No <a> tag found in this <td>.")
+                        print("No image tag or 'src' found.")
+                else:
+                    print("No 'td' with class 'field cover' found.")
         else:
            print("Table with id 'books' NOT found!")
     else:
@@ -43,4 +44,16 @@ while current < end:
     if len(rows) < 2: # if there are no books on page
         break
 
-print(titles)
+pattern = r"/books/(\d+[a-zA-Z]/\d+)" 
+large_image_codes = []
+for image in small_images: # getting the ID from small image url
+    match = re.search(pattern, image)
+    if match:
+        result = match.group(1)
+        large_image_codes.append(result)
+    else:
+        print("No match found")
+
+# creating the new url for larger images
+large_images = ["https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/" + image + ".jpg" for image in large_image_codes]
+print(large_images)
