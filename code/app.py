@@ -33,13 +33,13 @@ def check_goodreads():
 scheduler = BackgroundScheduler()
 
 # Add a job to the scheduler to run once a day
-scheduler.add_job(check_goodreads, CronTrigger(hour=0, minute=0))  # Runs daily at midnight
+scheduler.add_job(check_goodreads, 'cron', hour=12, minute=40)  # Runs daily at midnight
 
 # Start the scheduler
 scheduler.start()
 
 # Trigger the first update immediately when the app starts
-check_goodreads()  # <-- This forces the first update to happen immediately
+  # <-- This forces the first update to happen immediately
 
 @app.route('/')
 def home():
