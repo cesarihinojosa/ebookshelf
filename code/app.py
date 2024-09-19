@@ -49,6 +49,6 @@ def home():
 if __name__ == '__main__':
     try:
         app.run(debug=True)
-    except (SystemExit):
+    except (KeyboardInterrupt, SystemExit):
         # Shutdown the scheduler gracefully
         scheduler.shutdown()

@@ -1,20 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <meta charset="utf-8" />
+    <title>Swiper demo</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1"
+    />
+    <!-- Link Swiper's CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+
+    <!-- Link Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <!-- Demo styles -->
+    <style>
+      html,
+      body {
+        position: relative;
+        height: 100%;
+      }
+
+      body {
+        background: #fefae0;
+        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        color: #000;
+        margin: 0;
+        padding: 0;
+      }
+
+      .swiper {
+        width: 100%;
+        height: 100%;
+      }
+
+      .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fdf0d5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    </style>
   </head>
+
   <body>
-    <div>
-      {% for book in books %}
-      <div>
-        <img
-          src="{{ book.image }}"
-          style="max-width: 300px; max-height: 300px"
-        />
+    <!-- Swiper -->
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for i in range(8, books|length, 8) %}
+        <div class="swiper-slide">
+          <div class="container">
+            <div class="row gap-3">
+              <div class="p-2 col-2 container">
+                <img class="shadow rounded" src="{{ books[i-8].image }}" alt="" />
+              </div>
+              <div class="p-2 col-2 container">
+                <img class="shadow rounded" src="{{ books[i-7].image }}" alt="" />
+              </div>
+              <div class="p-2 col-2 container">
+                <img class="shadow rounded" src="{{ books[i-6].image }}" alt="" />
+              </div>
+              <div class="p-2 col-2 container">
+                <img class="shadow rounded" src="{{ books[i-5].image }}" alt="" />
+              </div>
+            </div>
+            <div class="row gap-3">
+              <div class="p-2 col-2 container">
+                <img class="shadow rounded" src="{{ books[i-4].image }}" alt="" />
+              </div>
+              <div class="p-2 col-2 container">
+                <img class="shadow rounded" src="{{ books[i-3].image }}" alt="" />
+              </div>
+              <div class="p-2 col-2 container">
+                <img class="shadow rounded" src="{{ books[i-2].image }}" alt="" />
+              </div>
+              <div class="p-2 col-2 container">
+                <img class="shadow rounded" src="{{ books[i-1].image }}" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        </div>
       </div>
-      {% endfor %}
     </div>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+      var swiper = new Swiper(".mySwiper", {
+        spaceBetween: 30,
+        centeredSlides: true,
+        autoplay: {
+          delay: 1000500,
+          disableOnInteraction: false,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
+    </script>
+
+    <!-- Bootstrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
