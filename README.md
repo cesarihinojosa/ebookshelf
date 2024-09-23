@@ -1,2 +1,3 @@
 # ebookshelf
-A system that lets you view the books you've read digitally, as a bookshelf in a monitor.
+
+A system that detects when a user has finsihed reading an ebook and then addds it to a digit bookshelf that is display in a monitor.
