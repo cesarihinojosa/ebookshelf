@@ -26,7 +26,7 @@ def get_books():
         link = f"https://www.goodreads.com/review/list/144045223-maria-reyna?page={current}&shelf=read&view=table"
         current += 1
         headers = { # necessary to imitate a human
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.3'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.4'
         }
         response = requests.get(link, headers=headers) # sending off request
 
