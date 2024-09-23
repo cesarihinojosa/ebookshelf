@@ -1,9 +1,9 @@
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from model import db, Book
 import scrape
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
+import logging
 
 app = Flask(__name__)
 
@@ -11,6 +11,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
+
+logging.basicConfig(
+    level=logging.INFO,  # Set the lowest level of messages to log (DEBUG and above)
+    format='%(asctime)s - %(levelname)s - %(message)s',  # Custom format for log messages
+    filename='logs/ebookshelf.log',  # Log messages to this file (omit this argument to log to console)
+    filemode='a'  # 'w' for overwriting the log file, 'a' for appending
+)
 
 # Create tables immediately after initializing the app
 with app.app_context():
@@ -22,24 +29,25 @@ def check_goodreads():
     with app.app_context():
         # Delete all existing records from the Book table
         Book.query.delete()
+        logging.info("Deleted all previous records, resetting database...")
 
         for book in books:
             new_book = Book(image=book)
             db.session.add(new_book)
 
         db.session.commit()
+        book_count = db.session.query(func.count(Book.id)).scalar()
+        logging.info(f"Finished resetting and there are {book_count} books in the database")
 
 # Initialize the scheduler
 scheduler = BackgroundScheduler()
 
 # Add a job to the scheduler to run once a day
-scheduler.add_job(check_goodreads, 'cron', hour=12, minute=40)  # Runs daily at midnight
+logging.info("Scheduler is set to run every Monday at 11am with 120 seconds of jitter")
+scheduler.add_job(check_goodreads, 'cron', day_of_week='mon', hour=11, minute=0, jitter=120)  # Runs daily at midnight
 
 # Start the scheduler
 scheduler.start()
-
-# Trigger the first update immediately when the app starts
-  # <-- This forces the first update to happen immediately
 
 @app.route('/')
 def home():
