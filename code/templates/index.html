@@ -67,8 +67,8 @@
       <div class="swiper-wrapper">
         {% for i in range(0, books|length, 8) %}
         <div class="swiper-slide">
-          <div class="container">
-            <div class="row gap-3">
+          <div class="container-fluid">
+            <div class="row gap-1">
               <div class="p-2 col-2 container">
                 <img
                   class="shadow rounded border-end border-5 border-dark-subtle"
@@ -98,7 +98,7 @@
                 />
               </div>
             </div>
-            <div class="row gap-3">
+            <div class="row gap-1">
               <div class="p-2 col-2 container">
                 <img
                   class="shadow rounded border-end border-5 border-dark-subtle"
@@ -165,19 +165,21 @@
     ></script>
 
     <script>
-      function shouldRefresh() {
+      // Function to calculate time until next day (midnight)
+      function getTimeUntilMidnight() {
         const now = new Date();
-        return now.getHours() === 1 && now.getMinutes() === 0;
+        const nextMidnight = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + 1
+        );
+        return nextMidnight - now;
       }
 
-      function checkAndRefresh() {
-        if (shouldRefresh()) {
-          window.location.reload();
-        }
-      }
-
-      // Check every hour (3600000 milliseconds)
-      setInterval(checkAndRefresh, 3600000);
+      // Reload the page once a day
+      setTimeout(function () {
+        location.reload();
+      }, getTimeUntilMidnight());
     </script>
   </body>
 </html>
