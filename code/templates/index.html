@@ -65,10 +65,24 @@
     <div class="swiper mySwiper">
       <!-- Core code for shwoing books -->
       <div class="swiper-wrapper">
-        {% for i in range(0, books|length, 8) %}
+        {% for i in range(0, books|length, 10) %}
         <div class="swiper-slide">
           <div class="container-fluid">
             <div class="row gap-1">
+              <div class="p-2 col-2 container">
+                <img
+                  class="shadow rounded border-end border-5 border-dark-subtle"
+                  src="{{ books[i-10].image }}"
+                  alt=""
+                />
+              </div>
+              <div class="p-2 col-2 container">
+                <img
+                  class="shadow rounded border-end border-5 border-dark-subtle"
+                  src="{{ books[i-9].image }}"
+                  alt=""
+                />
+              </div>
               <div class="p-2 col-2 container">
                 <img
                   class="shadow rounded border-end border-5 border-dark-subtle"
@@ -90,6 +104,8 @@
                   alt=""
                 />
               </div>
+            </div>
+            <div class="row gap-1">
               <div class="p-2 col-2 container">
                 <img
                   class="shadow rounded border-end border-5 border-dark-subtle"
@@ -97,8 +113,6 @@
                   alt=""
                 />
               </div>
-            </div>
-            <div class="row gap-1">
               <div class="p-2 col-2 container">
                 <img
                   class="shadow rounded border-end border-5 border-dark-subtle"
